@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Mac - Delicious Fast Food</title>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="scroll-fix.css">
+    <link rel="icon" type="image/x-icon" href="foodmac.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="index.html"><img src="foodmac.png" alt="Food Mac Logo" class="logo-img"></a>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="about.html" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="menu.html" class="nav-link">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="cart-btn" onclick="toggleCart()">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cartCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Image Slider -->
+    <section class="hero">
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide active">
+                    <img src="burger.jpg" alt="Delicious Burger">
+                    <div class="slide-content">
+                        <h1>Welcome to Food Mac</h1>
+                        <p>Taste the Best Fast Food in Town</p>
+                        <button class="cta-btn" onclick="window.location.href='menu.html'">Order Now</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="pizza.jpg" alt="Fresh Pizza">
+                    <div class="slide-content">
+                        <h1>Fresh & Hot Pizza</h1>
+                        <p>Made with Premium Ingredients</p>
+                        <button class="cta-btn" onclick="window.location.href='menu.html'">Order Now</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="crispyfries.jpg" alt="Crispy Fries">
+                    <div class="slide-content">
+                        <h1>Crispy Golden Fries</h1>
+                        <p>Perfect Side for Every Meal</p>
+                        <button class="cta-btn" onclick="window.location.href='menu.html'">Order Now</button>
+                    </div>
+                </div>
+
+                    <div class="slide">
+                    <img src="shawarma.jpg" alt="Shawarma">
+                    <div class="slide-content">
+                        <h1>Special Beef Shawarma</h1>
+                        <p>Made with Tendered Beef and Love</p>
+                        <button class="cta-btn" onclick="window.location.href='menu.html'">Order Now</button>
+                    </div>
+                </div>
+
+                    <div class="slide">
+                    <img src="sandwiches.jpg" alt="Sandwiches">
+                    <div class="slide-content">
+                        <h1>Grilled Chicken Sandwiches</h1>
+                        <p>A Perfect Bite of Taste</p>
+                        <button class="cta-btn" onclick="window.location.href='menu.html'">Order Now</button>
+                    </div>
+                </div>
+
+            </div>
+            <button class="slider-btn prev-btn" onclick="changeSlide(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn next-btn" onclick="changeSlide(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="slider-dots">
+                <span class="dot active" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose Food Mac?</h2>
+            <div class="features-grid">
+
+                <div class="feature-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Fast Delivery</h3>
+                    <p>Quick delivery within 30 minutes</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Fresh Ingredients</h3>
+                    <p>Always fresh and quality ingredients</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Best Quality</h3>
+                    <p>Premium quality food at affordable prices</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>24/7 Support</h3>
+                    <p>Round the clock customer support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Items -->
+    <section class="popular-items">
+        <div class="container">
+            <h2>Popular Items</h2>
+            <div class="items-grid">
+                <div class="item-card">
+                    <img src="macburger.jpg" alt="Mac Burger">
+                    <div class="item-info">
+                        <h3>Mac Burger</h3>
+                        <p>Juicy beef patty with fresh vegetables</p>
+                        <span class="price">Rs. 350</span>
+                        <div class="quantity-selection">
+                            <label>Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(1, -1)" disabled>-</button>
+                                <span class="quantity-display" id="quantity-1">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(1, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(1)">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <div class="item-card">
+                    <img src="wings.jpg" alt="Chicken Wings">
+                    <div class="item-info">
+                        <h3>Chicken Wings</h3>
+                        <p>6 pcs Crispy wings with special sauce</p>
+                        <span class="price">Rs. 450</span>
+                        <div class="quantity-selection">
+                            <label>Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(2, -1)" disabled>-</button>
+                                <span class="quantity-display" id="quantity-2">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(2, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(2)">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="item-card">
+                    <img src="macpizza.jpg" alt="Mac Pizza">
+                    <div class="item-info">
+                        <h3>Mac Pizza</h3>
+                        <p>Loaded with cheese and toppings</p>
+                        <span class="price">Rs. 650</span>
+                        <div class="quantity-selection">
+                            <label>Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(3, -1)" disabled>-</button>
+                                <span class="quantity-display" id="quantity-3">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(3, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn" onclick="addToCart(3)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-content cart-modal">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <button class="close-btn" onclick="toggleCart()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Your cart is empty</p>
+                    </div>
+                </div>
+                <div class="cart-summary" id="cartSummary" style="display: none;">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Rs. 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery:</span>
+                        <span>Rs. 100</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">Rs. 100</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-content checkout-modal">
+            <div class="modal-header">
+                <h2>Checkout</h2>
+                <button class="close-btn" onclick="closeCheckout()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="checkoutForm">
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Phone Number *</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryAddress">Delivery Address *</label>
+                        <textarea id="deliveryAddress" name="deliveryAddress" rows="3" required placeholder="Enter your complete address including street, area, and city"></textarea>
+                    </div>
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div id="checkoutItems"></div>
+                        <div class="checkout-total">
+                            <strong>Total: <span id="checkoutTotal">Rs. 0</span></strong>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="place-order-btn" onclick="placeOrder()">
+                    <i class="fab fa-whatsapp"></i>
+                    Place Order via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <a href="index.html"><img src="foodmac.png" alt="Food Mac Footer Logo"></a>
+                    </div>
+                    <p>Serving delicious fast food since 2020. Quality and taste you can trust.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#">Menu</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+                        <li><a href="disclaimer.html">Disclaimer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Shehwar Mega Store, Jubilee Town, Lahore, Pakistan</p>
+                    <p><i class="fas fa-phone"></i> +92 300 1234567</p>
+                    <p><i class="fas fa-envelope"></i> info@foodmac.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Food Mac. All rights reserved. A Project by ColonStack Technologies.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="home.js"></script>
+</body>
+</html>
