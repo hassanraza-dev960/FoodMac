@@ -1,4 +1,12 @@
-// Menu Data
+// ============================================================
+//  menu.js  —  Menu Page Script
+//  Cart state and all cart functions live in cart.js.
+//  This file only handles: menu rendering, filter buttons,
+//  mobile nav, size selection, quantity controls, and
+//  addToCart bridging.
+// ============================================================
+
+// ── Menu Data ─────────────────────────────────────────────────
 const menuData = [
   // Pizzas
   {
@@ -164,74 +172,66 @@ const menuData = [
   },
 ]
 
-// Global Variables
-let cart = []
+// ── Page-level state ──────────────────────────────────────────
 let currentFilter = "all"
 
-// DOM Elements
+// ── DOM References ────────────────────────────────────────────
 const menuGrid = document.getElementById("menuGrid")
-const cartCount = document.getElementById("cartCount")
-const cartModal = document.getElementById("cartModal")
-const checkoutModal = document.getElementById("checkoutModal")
-const cartItems = document.getElementById("cartItems")
-const cartSummary = document.getElementById("cartSummary")
-const checkoutBtn = document.getElementById("checkoutBtn")
 
-// Initialize the page
+// ── Initialise on DOM ready ───────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   renderMenuItems()
   setupFilterButtons()
   setupMobileMenu()
+  // cart.js has already loaded `cart` from localStorage.
+  // Just refresh the badge/display for this page.
   updateCartDisplay()
 })
 
-// Mobile Menu Setup
+// ── Mobile Menu Setup ─────────────────────────────────────────
 function setupMobileMenu() {
   const hamburger = document.querySelector(".hamburger")
-  const navMenu = document.querySelector(".nav-menu")
+  const navMenu   = document.querySelector(".nav-menu")
 
   hamburger.addEventListener("click", () => {
     hamburger.classList.toggle("active")
     navMenu.classList.toggle("active")
   })
 
-  // Close mobile menu when clicking on a link
   document.querySelectorAll(".nav-link").forEach((n) =>
     n.addEventListener("click", () => {
       hamburger.classList.remove("active")
       navMenu.classList.remove("active")
-    }),
+    })
   )
 }
 
-// Setup Filter Buttons
+// ── Filter Buttons ────────────────────────────────────────────
 function setupFilterButtons() {
   const filterButtons = document.querySelectorAll(".filter-btn")
 
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      // Remove active class from all buttons
       filterButtons.forEach((btn) => btn.classList.remove("active"))
-      // Add active class to clicked button
       button.classList.add("active")
-
-      // Update current filter and render items
       currentFilter = button.dataset.category
       renderMenuItems()
     })
   })
 }
 
-// Render Menu Items
+// ── Menu Rendering ────────────────────────────────────────────
 function renderMenuItems() {
-  const filteredItems = currentFilter === "all" ? menuData : menuData.filter((item) => item.category === currentFilter)
+  const filteredItems =
+    currentFilter === "all"
+      ? menuData
+      : menuData.filter((item) => item.category === currentFilter)
 
   menuGrid.innerHTML = filteredItems.map((item) => createMenuItemHTML(item)).join("")
 }
 
-// Create Menu Item HTML
 function createMenuItemHTML(item) {
-  const defaultSize = item.hasSizes ? "M" : "default"
+  const defaultSize  = item.hasSizes ? "M" : "default"
   const defaultPrice = item.prices[defaultSize]
 
   return `
@@ -241,7 +241,7 @@ function createMenuItemHTML(item) {
         <h3 class="item-name">${item.name}</h3>
         <p class="item-description">${item.description}</p>
         <div class="item-price" id="price-${item.id}">Rs. ${defaultPrice}</div>
-        
+
         ${
           item.hasSizes
             ? `
@@ -251,9 +251,9 @@ function createMenuItemHTML(item) {
               ${Object.keys(item.prices)
                 .map(
                   (size) => `
-                <button class="size-btn ${size === "M" ? "active" : ""}" 
+                <button class="size-btn ${size === "M" ? "active" : ""}"
                         onclick="selectSize(${item.id}, '${size}')">${size}</button>
-              `,
+              `
                 )
                 .join("")}
             </div>
@@ -261,7 +261,7 @@ function createMenuItemHTML(item) {
         `
             : ""
         }
-        
+
         <div class="quantity-selection">
           <label>Quantity:</label>
           <div class="quantity-controls">
@@ -270,7 +270,7 @@ function createMenuItemHTML(item) {
             <button class="quantity-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
           </div>
         </div>
-        
+
         <button class="add-to-cart-btn" onclick="addToCart(${item.id})">
           Add to Cart
         </button>
@@ -279,285 +279,77 @@ function createMenuItemHTML(item) {
   `
 }
 
-// Select Size Function
+// ── Size Selection ────────────────────────────────────────────
 function selectSize(itemId, size) {
-  const item = menuData.find((i) => i.id === itemId)
-  const sizeButtons = document.querySelectorAll(`[onclick*="selectSize(${itemId}"]`)
+  const item         = menuData.find((i) => i.id === itemId)
+  const sizeButtons  = document.querySelectorAll(`[onclick*="selectSize(${itemId}"]`)
   const priceElement = document.getElementById(`price-${itemId}`)
 
-  // Update active size button
   sizeButtons.forEach((btn) => btn.classList.remove("active"))
   event.target.classList.add("active")
 
-  // Update price display
   priceElement.textContent = `Rs. ${item.prices[size]}`
 }
 
-// Change Quantity Function
+// ── Quantity Controls (menu items) ───────────────────────────
 function changeQuantity(itemId, change) {
   const quantityElement = document.getElementById(`quantity-${itemId}`)
-  const decreaseBtn = document.querySelector(`[onclick*="changeQuantity(${itemId}, -1)"]`)
-  let currentQuantity = Number.parseInt(quantityElement.textContent)
+  const decreaseBtn     = document.querySelector(`[onclick*="changeQuantity(${itemId}, -1)"]`)
+  let currentQuantity   = Number.parseInt(quantityElement.textContent)
 
   currentQuantity += change
-
-  if (currentQuantity < 1) {
-    currentQuantity = 1
-  }
+  if (currentQuantity < 1) currentQuantity = 1
 
   quantityElement.textContent = currentQuantity
-  decreaseBtn.disabled = currentQuantity <= 1
+  decreaseBtn.disabled        = currentQuantity <= 1
 }
 
-// Add to Cart Function
+// ── Add to Cart (delegates to cart.js cartAdd) ────────────────
 function addToCart(itemId) {
-  const item = menuData.find((i) => i.id === itemId)
+  const item            = menuData.find((i) => i.id === itemId)
   const quantityElement = document.getElementById(`quantity-${itemId}`)
-  const quantity = Number.parseInt(quantityElement.textContent)
+  const quantity        = Number.parseInt(quantityElement.textContent)
 
   let selectedSize = "default"
-  let price = item.prices.default
+  let price        = item.prices.default
 
   if (item.hasSizes) {
     const activeSizeBtn =
       document.querySelector(`[onclick*="selectSize(${itemId}"] .active`) ||
       document.querySelector(`[onclick*="selectSize(${itemId}"].active`)
+
     if (activeSizeBtn) {
       selectedSize = activeSizeBtn.textContent
-      price = item.prices[selectedSize]
+      price        = item.prices[selectedSize]
     } else {
       selectedSize = "M"
-      price = item.prices.M
+      price        = item.prices.M
     }
   }
 
-  // Check if item with same size already exists in cart
-  const existingItemIndex = cart.findIndex((cartItem) => cartItem.id === itemId && cartItem.size === selectedSize)
+  // Delegate to the shared cartAdd() defined in cart.js
+  cartAdd({
+    id:       itemId,
+    name:     item.name,
+    size:     selectedSize,
+    price:    price,
+    quantity: quantity,
+    image:    item.image,
+  })
 
-  if (existingItemIndex > -1) {
-    cart[existingItemIndex].quantity += quantity
-  } else {
-    cart.push({
-      id: itemId,
-      name: item.name,
-      size: selectedSize,
-      price: price,
-      quantity: quantity,
-      image: item.image,
-    })
-  }
-
-  updateCartDisplay()
-
-  // Reset quantity to 1
+  // Reset quantity selector to 1
   quantityElement.textContent = "1"
   const decreaseBtn = document.querySelector(`[onclick*="changeQuantity(${itemId}, -1)"]`)
   decreaseBtn.disabled = true
 
-  // Show success feedback
-  const addBtn = event.target
+  // Button feedback
+  const addBtn       = event.target
   const originalText = addBtn.textContent
-  addBtn.textContent = "Added!"
+  addBtn.textContent      = "Added!"
   addBtn.style.background = "#27ae60"
 
   setTimeout(() => {
-    addBtn.textContent = originalText
+    addBtn.textContent      = originalText
     addBtn.style.background = "#27ae60"
   }, 1000)
 }
-
-// Update Cart Display
-function updateCartDisplay() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
-  cartCount.textContent = totalItems
-
-  if (cart.length === 0) {
-    cartItems.innerHTML = `
-      <div class="empty-cart">
-        <i class="fas fa-shopping-cart"></i>
-        <p>Your cart is empty</p>
-      </div>
-    `
-    cartSummary.style.display = "none"
-    checkoutBtn.disabled = true
-  } else {
-    cartItems.innerHTML = cart.map((item) => createCartItemHTML(item)).join("")
-    cartSummary.style.display = "block"
-    checkoutBtn.disabled = false
-    updateCartSummary()
-  }
-}
-
-// Create Cart Item HTML
-function createCartItemHTML(item) {
-  return `
-    <div class="cart-item">
-      <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-      <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-details">
-          ${item.size !== "default" ? `Size: ${item.size} | ` : ""}
-          Rs. ${item.price} each
-        </div>
-      </div>
-      <div class="cart-item-controls">
-        <button class="cart-quantity-btn" onclick="updateCartItemQuantity(${item.id}, '${item.size}', -1)">-</button>
-        <span class="cart-quantity-display">${item.quantity}</span>
-        <button class="cart-quantity-btn" onclick="updateCartItemQuantity(${item.id}, '${item.size}', 1)">+</button>
-        <button class="delete-btn" onclick="removeFromCart(${item.id}, '${item.size}')">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  `
-}
-
-// Update Cart Item Quantity
-function updateCartItemQuantity(itemId, size, change) {
-  const itemIndex = cart.findIndex((item) => item.id === itemId && item.size === size)
-
-  if (itemIndex > -1) {
-    cart[itemIndex].quantity += change
-
-    if (cart[itemIndex].quantity <= 0) {
-      cart.splice(itemIndex, 1)
-    }
-
-    updateCartDisplay()
-  }
-}
-
-// Remove from Cart
-function removeFromCart(itemId, size) {
-  const itemIndex = cart.findIndex((item) => item.id === itemId && item.size === size)
-
-  if (itemIndex > -1) {
-    cart.splice(itemIndex, 1)
-    updateCartDisplay()
-  }
-}
-
-// Update Cart Summary
-function updateCartSummary() {
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = 100
-  const total = subtotal + delivery
-
-  document.getElementById("subtotal").textContent = `Rs. ${subtotal}`
-  document.getElementById("total").textContent = `Rs. ${total}`
-}
-
-// Toggle Cart Modal
-function toggleCart() {
-  cartModal.classList.toggle("active")
-}
-
-// Open Checkout Modal
-function openCheckout() {
-  cartModal.classList.remove("active")
-  checkoutModal.classList.add("active")
-  updateCheckoutSummary()
-}
-
-// Close Checkout Modal
-function closeCheckout() {
-  checkoutModal.classList.remove("active")
-}
-
-// Update Checkout Summary
-function updateCheckoutSummary() {
-  const checkoutItems = document.getElementById("checkoutItems")
-  const checkoutTotal = document.getElementById("checkoutTotal")
-
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = 100
-  const total = subtotal + delivery
-
-  checkoutItems.innerHTML =
-    cart
-      .map(
-        (item) => `
-    <div class="checkout-item">
-      <span>${item.quantity}x ${item.name} ${item.size !== "default" ? `(${item.size})` : ""}</span>
-      <span>Rs. ${item.price * item.quantity}</span>
-    </div>
-  `,
-      )
-      .join("") +
-    `
-    <div class="checkout-item">
-      <span>Delivery</span>
-      <span>Rs. 100</span>
-    </div>
-  `
-
-  checkoutTotal.textContent = `Rs. ${total}`
-}
-
-// Place Order Function
-function placeOrder() {
-  const customerName = document.getElementById("customerName").value.trim()
-  const customerPhone = document.getElementById("customerPhone").value.trim()
-  const deliveryAddress = document.getElementById("deliveryAddress").value.trim()
-
-  if (!customerName || !customerPhone || !deliveryAddress) {
-    alert("Please fill in all required fields")
-    return
-  }
-
-  // Create order message
-  let orderMessage = "*New Order from Food Mac Website*\n\n"
-  orderMessage += "*Order Details:*\n"
-
-  cart.forEach((item) => {
-    orderMessage += `${item.quantity}x ${item.name}`
-    if (item.size !== "default") {
-      orderMessage += ` (${item.size})`
-    }
-    orderMessage += ` - Rs. ${item.price * item.quantity}\n`
-  })
-
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const delivery = 100
-  const total = subtotal + delivery
-
-  orderMessage += `\n*Subtotal:* Rs. ${subtotal}\n`
-  orderMessage += `*Delivery:* Rs. ${delivery}\n`
-  orderMessage += `*Total:* Rs. ${total}\n\n`
-
-  orderMessage += `*Customer Details:*\n`
-  orderMessage += `*Name:* ${customerName}\n`
-  orderMessage += `*Phone:* ${customerPhone}\n`
-  orderMessage += `*Address:* ${deliveryAddress}\n\n`
-
-  orderMessage += `Order Confirmed. Thank you!`
-
-  // Encode message for WhatsApp URL
-  const encodedMessage = encodeURIComponent(orderMessage)
-  const whatsappURL = `https://wa.me/923078869698?text=${encodedMessage}`
-
-  // Open WhatsApp
-  window.open(whatsappURL, "_blank")
-
-  // Clear cart and close modal
-  cart = []
-  updateCartDisplay()
-  closeCheckout()
-
-  // Show success message
-  alert("Order sent to WhatsApp! Please wait for confirmation.")
-}
-
-// Close modals when clicking outside
-document.addEventListener("click", (event) => {
-  if (event.target.classList.contains("modal-overlay")) {
-    event.target.classList.remove("active")
-  }
-})
-
-// Prevent modal content clicks from closing modal
-document.querySelectorAll(".modal-content").forEach((modal) => {
-  modal.addEventListener("click", (event) => {
-    event.stopPropagation()
-  })
-})
